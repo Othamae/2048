@@ -1,4 +1,5 @@
 import random
+import copy
 
 #2048
 
@@ -53,15 +54,26 @@ def show_board(board):
 def fill_board(board):  
     counter=0    
     while counter<2:
-        if board_completed(board) and no_move(board)==False:
+        if board_completed(board) and not any_move(board):
             break
-        y= random.randint(0, len(board[0])-1)
-        x= random.randint(0, len(board[0])-1)
-        if board[y][x]==0:
-            board[y][x]=2
-            counter+=1    
+        else:
+            y= random.randint(0, len(board[0])-1)
+            x= random.randint(0, len(board[0])-1)
+            if board_completed(board):
+                    break 
+            if board[y][x]==0:
+                board[y][x]=pick_number()
+                counter+=1 
+                  
+
+def pick_number():
+    if random.randint(1,8)==1:
+        return 4
+    else:
+        return 2
 
 def turn(board,move):
+    board_copy = copy.deepcopy(board)
     if move == "w":
         board= move_up(board)
     elif move == "s":
@@ -72,6 +84,10 @@ def turn(board,move):
         board= move_right(board)
     else:
         input("You enter a wrong value, please enter w/a/s/d: ")
+    
+    if board == board_copy:
+        print("Try a different direction!")
+
     return show_board(board)
 
 def move_up(board):
@@ -158,47 +174,34 @@ def move_right(board):
 def board_completed(board):
     for i in range(len(board)):
         for j in range(len(board)):
-            if board[i][j]==0 or no_move(board)==False:
-                return False
+            if board[i][j]==0:
+                return False                
     return True
 
-def no_move(board):
-    res= True
+def any_move(board):
+    res= False
     for i in range(len(board)):
         for j in range(len(board)-1):
             if board[i][j]==board[i][j+1]:
-                res= False
+                res= True
     
     for i in range(len(board)-1):
         for j in range(len(board)):
             if board[i][j]==board[i+1][j]:
-                res= False
+                res= True
     return res
 
 def win(board):
-    if 2048 in board:
-        print("CONGRATULATION!! YOU REACHED 2048!!")
-        return True
+    for i in range(len(board)):
+        for j in range(len(board)):
+            if board[i][j]==2048:
+                print("CONGRATULATION!! YOU REACHED 2048!!")
+                return True
     return False
 
 
 
-# #TEST GAME
-# size=4
-# board= set_board(size)
-# show_board(board)
-
-# test_board= [[0,0,2,2],[0,4,0,2],[2,2,4,0],[0,2,4,0]]
-
-# show_board(test_board)
-# test_board= move_up(test_board)
-# show_board(test_board)
-# fill_board(test_board)
-# show_board(test_board)
-
-
-
-#GAME
+# #GAME
 size = 4
 board = set_board(size)
 show_board(board) 
@@ -207,17 +210,34 @@ winner = False
 while movements:      
     move= input("w/a/s/d: ")
     turn(board,move)   
-    if win(board) and winner== False:
+    if win(board) and not winner:
         winner = True 
         continue_playing= input("Do you want to continue? (y): ")
         if continue_playing!= "y":
             break
 
-    if board_completed(board):
-        print("GAME OVER")
+    if board_completed(board) and not any_move(board):
+        print("GAME OVER!!")
         break
 
-print("FIN")   
 
+
+# #TEST GAME
+# size=4
+# board= set_board(size)
+# show_board(board)
+
+# test_board= [[2,2048,3,5],[5,4,7,2],[2,3,4,5],[9,2,7,9]]
+
+# show_board(test_board)
+# print("Win? ", win(test_board))
+# print("Completed? ", board_completed(test_board))
+# print("Any move? ", any_move(test_board))
+# if board_completed(test_board) and not any_move(test_board):
+#     print("GAME OVER")
+# test_board= move_up(test_board)
+# show_board(test_board)
+# fill_board(test_board)
+# show_board(test_board)
 
 
