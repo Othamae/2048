@@ -51,8 +51,10 @@ def show_board(board):
       
 
 def fill_board(board):  
-    counter=0
+    counter=0    
     while counter<2:
+        if board_completed(board) and no_move(board)==False:
+            break
         y= random.randint(0, len(board[0])-1)
         x= random.randint(0, len(board[0])-1)
         if board[y][x]==0:
@@ -153,8 +155,25 @@ def move_right(board):
         fill_board(board)
     return board
 
-def board_completed():
-    pass
+def board_completed(board):
+    for i in range(len(board)):
+        for j in range(len(board)):
+            if board[i][j]==0 or no_move(board)==False:
+                return False
+    return True
+
+def no_move(board):
+    res= True
+    for i in range(len(board)):
+        for j in range(len(board)-1):
+            if board[i][j]==board[i][j+1]:
+                res= False
+    
+    for i in range(len(board)-1):
+        for j in range(len(board)):
+            if board[i][j]==board[i+1][j]:
+                res= False
+    return res
 
 def win(board):
     if 2048 in board:
@@ -164,10 +183,10 @@ def win(board):
 
 
 
-#TEST GAME
-size=4
-board= set_board(size)
-show_board(board)
+# #TEST GAME
+# size=4
+# board= set_board(size)
+# show_board(board)
 
 # test_board= [[0,0,2,2],[0,4,0,2],[2,2,4,0],[0,2,4,0]]
 
@@ -177,8 +196,28 @@ show_board(board)
 # fill_board(test_board)
 # show_board(test_board)
 
-move= input("w/a/s/d: ")
+
 
 #GAME
+size = 4
+board = set_board(size)
+show_board(board) 
+movements = True
+winner = False
+while movements:      
+    move= input("w/a/s/d: ")
+    turn(board,move)   
+    if win(board) and winner== False:
+        winner = True 
+        continue_playing= input("Do you want to continue? (y): ")
+        if continue_playing!= "y":
+            break
 
-turn(board,move)
+    if board_completed(board):
+        print("GAME OVER")
+        break
+
+print("FIN")   
+
+
+
